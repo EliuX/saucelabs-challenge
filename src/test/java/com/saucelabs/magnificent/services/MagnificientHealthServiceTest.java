@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import static com.saucelabs.magnificent.services.MagnificientHealthService.MAGNIFICIENT_SERVER_URL;
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -43,5 +42,17 @@ public class MagnificientHealthServiceTest {
                 .thenReturn(ResponseEntity.status(HttpStatus.OK).body("Magnificent!"));
 
         Assert.assertTrue("Server should be notified as alive", healthService.isServerAlive());
+    }
+
+    @Test
+    public void healthStatsShouldReturn67Percent(){
+        healthService.queueHealthResult(true);
+        healthService.queueHealthResult(true);
+        healthService.queueHealthResult(false);
+
+        Assert.assertEquals("Health stat should be 67%",
+                67L,
+                healthService.healthStats().longValue());
+
     }
 }
